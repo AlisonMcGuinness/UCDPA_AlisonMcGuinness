@@ -1,7 +1,8 @@
 """
-webscrape.py
+import_teachers.py
 created: 17/04/21
-example code to read info from web site into a dataframe and analyse
+
+functions to read teacher statisics from web site into a dataframe and clean the data
 
 """
 import requests
@@ -9,7 +10,7 @@ import pandas as pd
 from bs4 import BeautifulSoup
 
 
-def do_webscrape():
+def get_teacher_data():
     pd.set_option('display.max_columns', 20)
     pd.set_option('display.width', 2000)
 
@@ -32,9 +33,13 @@ def do_webscrape():
     jobsharing = read_table(soup, jobshare_table)
     total_teachers = read_table(soup, total_table)
 
-    print('Carrers', career_breaks.head())
-    print('totals', total_teachers.head())
-    print('jobshare', jobsharing.head())
+    print('Career Breaks (raw)')
+    print(career_breaks.head())
+    print('Total teachers (raw)')
+    print(total_teachers.head())
+    print('Job Sharing (raw)')
+    print(jobsharing.head())
+
     return career_breaks, jobsharing, total_teachers
 
 
@@ -61,7 +66,7 @@ def read_table(soup, table_head):
                 first = False
             else:
                 # all other rows should be integer values
-                data.append([int(x) if x.isdigit() else x for x in this_row ])
+                data.append([int(x) if x.isdigit() else x for x in this_row])
         # convert lists of data to a DataFrame
         df = pd.DataFrame(data, columns=cols)
     return df
@@ -80,24 +85,41 @@ def tidy_teacher_data(raw_careers, raw_jobsharing, raw_totals):
     # Just want first 3 columns
     new_careers = raw_careers.iloc[:, 0:3]
     # Tidy up headers
-    headers = ["Year", "Male_CB", "Female_CB"]
+    headers = ["Full_Year", "Male_CB", "Female_CB"]
     new_careers = new_careers.set_axis(headers, axis=1)
+    new_careers = fix_year_col(new_careers, "Full_Year", "Year")
     # print(new_careers.head())
 
     # Totals - Need to use first row of data as the headers
-    headers = ['Year', 'Female_All', 'Male_All','Female_Prin', 'Male_Prin', 'All']
+    headers = ["Full_Year", "Female_All", "Male_All", "Female_Prin", "Male_Prin", "All"]
+
     new_totals = raw_totals.iloc[1:, 0:6]
     new_totals = new_totals.set_axis(headers, axis=1)
-    # new_totals rename(columns={"\xa0":"School Year"}, inplace=True)
-    # print(new_totals.head(10))
+    new_totals = fix_year_col(new_totals, "Full_Year", "Year")
+    new_totals = new_totals.infer_objects().sort_values('Year', ascending=True)
 
     # Job Sharing
     # just need first 2 cols
     new_jobsharing = raw_jobsharing.iloc[:, 0:2]
     # Tidy up headers
-    headers = ["Year", "All_JS"]
-    new_jobsharing = new_jobsharing.set_axis(headers, axis=1)
+    headers = ["Full_Year", "All_JS"]
+    new_jobsharing = new_jobsharing.set_axis(headers, axis=1).infer_objects()
+    new_jobsharing = fix_year_col(new_jobsharing, "Full_Year", "Year")
+    print(new_jobsharing)
+    new_jobsharing = new_jobsharing.sort_values("Year", ascending=True)
 
+    print("Career Breaks (clean)")
+    print(new_careers.head())
+    print("Total teachers (clean)")
+    print(new_totals.head())
+    print("Job Sharing (clean)")
+    print(new_jobsharing.head())
     return new_careers, new_jobsharing, new_totals
 
 
+# create new column on the df called <new_col> taking value from the first year in old_col in format year/year
+# drop any rows where the year col is not an integer first
+def fix_year_col(df, year_col, new_col):
+    df[new_col] = df[year_col].str.split('/').str[0]
+    ok_rows = df[df[new_col].str.isdigit()]
+    return ok_rows.astype({new_col: int})

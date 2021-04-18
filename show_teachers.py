@@ -1,5 +1,5 @@
 """
-visualise.py
+show_teachers.py
 created: 17/04/21
 methods to display visualiations for dataframes
 """
@@ -71,3 +71,12 @@ def show_gender_percentages(title, totals, male_col, female_col, total_col):
 
 
 
+def show_teacher_population(totals):
+
+    p = sns.lineplot(data=totals, x='Year2', y='All')
+    # plt.xticks(rotation=0)
+    # plt.xticks([2000, 2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020])
+
+    p.set(xlabel='School Year', ylabel='Number of teachers')
+    plt.title("Teacher Population overall")
+    plt.show()
