@@ -1,16 +1,19 @@
 # This is a sample Python script.
+from webscrape import do_webscrape, tidy_teacher_data
+from visualise import show_career_breaks, show_principals
+
 
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
+# Extract Teacher Statistics Data
+raw_careers, raw_jobsharing, raw_totals = do_webscrape()
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint...
+# Tidy Data
+careers, job_sharing, totals = tidy_teacher_data(raw_careers, raw_jobsharing, raw_totals)
 
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+# Graph teachers
+show_career_breaks(careers, totals)
+show_principals(totals)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
