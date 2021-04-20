@@ -2,7 +2,7 @@
 import_teachers.py
 created: 17/04/21
 
-functions to read teacher statisics from web site into a dataframe and clean the data
+functions to read teacher statistics from web site into a dataframe and clean the data
 
 """
 import requests
@@ -78,7 +78,7 @@ def add_td(row, data, colspan):
 
 
 # Tidy up the Raw data from webscraping
-def tidy_teacher_data(raw_careers, raw_jobsharing, raw_totals):
+def clean_teacher_data(raw_careers, raw_jobsharing, raw_totals):
     # Make sure each DataFrame has a Year column so we can merge
 
     # Career Breaks
