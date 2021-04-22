@@ -69,14 +69,39 @@ def show_gender_percentages(title, totals, male_col, female_col, total_col):
     # Show plot
     plt.show()
 
-
-
 def show_teacher_population(totals):
 
-    p = sns.lineplot(data=totals, x='Year2', y='All')
+    p = sns.lineplot(data=totals, x='Full_Year', y='All')
     # plt.xticks(rotation=0)
     # plt.xticks([2000, 2002, 2004, 2006, 2008, 2010, 2012, 2014, 2016, 2018, 2020])
 
     p.set(xlabel='School Year', ylabel='Number of teachers')
     plt.title("Teacher Population overall")
+    plt.show()
+
+def show_gender_pie(all_teachers):
+    # Pie chart will work best for 1 year of data
+    all_teachers = all_teachers.set_index("Full_Year")
+
+    # get data for the teacher pie chart - 2017 row with cols for male/female TEACHERS
+    t = all_teachers.loc[["2017/2018"],["Female_All", "Male_All"]]
+    # get data frame into format for pie chart by pivoting it and renaming cols
+    t.rename(columns={"Female_All": "Female", "Male_All": "Male"}, inplace=True)
+    t = t.melt().set_index("variable")
+
+    # get dataframe for the principal pie chart - 2017 row with cols for male/female PRINCIPALS
+    p = all_teachers.loc[["2017/2018"], ["Female_Prin","Male_Prin"]]
+    # get data frame into format for pie chart by pivoting it and renaming cols
+    p.rename(columns={"Female_Prin": "Female", "Male_Prin": "Male"}, inplace=True)
+    p = p.melt().set_index("variable")
+
+    # use pink/blue to make it easy to identify genders
+    colors = ["#FC46AA","#00BFFF"]
+    # set up 2 plots on the figure to compare pie charts side by side
+    fig, ax = plt.subplots(1,2)
+    t.plot(kind='pie', y="value", ylabel="", colors=colors, title="Teachers", ax=ax[0], autopct='%1.1f%%', startangle=0, fontsize=12, legend=False)
+    p.plot(kind='pie', y="value", ylabel="", colors=colors, title="Principals", ax=ax[1], autopct='%1.1f%%', startangle=0, fontsize=12, legend=False)
+
+    # Add an overall title
+    fig.suptitle("2017 Primary School Staff")
     plt.show()

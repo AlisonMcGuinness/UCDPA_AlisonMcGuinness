@@ -18,6 +18,15 @@ def test():
     print(all.head())
     show_class_sizes(all)
 
+
+
+def show_class_sizes(all_classes):
+    sns.relplot(x='year', y='value', data=all_classes, kind='line', hue="Province")
+
+    # Show plot
+
+    plt.show()
+"""
 def show_class_sizes(all_classes):
     sns.distplot(all_classes['value'],
              kde=True, # disable the KDE line, this just makes a hist plot
@@ -36,3 +45,4 @@ def show_class_sizes(all_classes):
     # Bar plot of avg_inv_by_month
     avg_class.plot(kind="bar")
     plt.show()
+"""
