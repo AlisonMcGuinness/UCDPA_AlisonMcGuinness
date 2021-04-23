@@ -45,9 +45,9 @@ def get_schools_data():
             all_years = pd.concat([all_years, year])
     print('before merge', all_years.shape)
     print(all_years.head())
-    all_schools = all_years.merge(school_types, on="Roll Number")
-    print('after merge', all_schools.shape)
-    print(all_schools.head())
+    all_class_sizes = all_years.merge(school_types, on="Roll Number")
+    print('after merge', all_class_sizes.shape)
+    print(all_class_sizes.head())
 
     # for verification
     # avgs = all_schools.groupby(['year', 'Province'])['value'].mean()
@@ -58,7 +58,7 @@ def get_schools_data():
 
     #print('all leinster', all_schools[all_schools['Province']=="Leinster"].count())
     #print(avgs.head(40))
-    return all_schools
+    return school_types, all_class_sizes
 
 # import the excel file for the given year and return in dataframe
 def import_classes_by_year(schools, year, year_info):
