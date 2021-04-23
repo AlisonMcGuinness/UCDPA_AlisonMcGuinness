@@ -58,6 +58,7 @@ def read_table(soup, table_head):
             for td in tr.children:
                 # make a list of the items in this row
                 colspan = int(td.attrs.get('colspan', 1))
+                # if there is a colspan then must add multiple items to the list
                 add_td(this_row, td.text, colspan)
 
             if first:
@@ -82,7 +83,7 @@ def clean_teacher_data(raw_careers, raw_jobsharing, raw_totals):
     # Make sure each DataFrame has a Year column so we can merge
 
     # Career Breaks
-    # Just want first 3 columns
+    # Just want first 3 columns (primary data, not post primary)
     new_careers = raw_careers.iloc[:, 0:3]
     # Tidy up headers
     headers = ["Full_Year", "Male_CB", "Female_CB"]
@@ -99,7 +100,7 @@ def clean_teacher_data(raw_careers, raw_jobsharing, raw_totals):
     new_totals = new_totals.infer_objects().sort_values('Year', ascending=True)
 
     # Job Sharing
-    # just need first 2 cols
+    # just need first 2 cols (primary, not post primary)
     new_jobsharing = raw_jobsharing.iloc[:, 0:2]
     # Tidy up headers
     headers = ["Full_Year", "All_JS"]
